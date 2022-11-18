@@ -1,6 +1,8 @@
 package application.controller;
 
 import application.TicClient;
+import javafx.event.EventHandler;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
@@ -8,7 +10,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Button;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -29,6 +34,9 @@ public class Controller implements Initializable {
     @FXML
     private Rectangle game_panel;
 
+    @FXML
+    private Button pair_button;
+
 
     private static boolean TURN = true;
     //true is 1, false is 2
@@ -41,27 +49,38 @@ public class Controller implements Initializable {
         //if(playerNum==0){
            //ticClient.sendPairCommand();
        // }else {
-            game_panel.setOnMouseClicked(event -> {
-                System.out.println("controller change panel");
+       // System.out.println("?????");
+        pair_button.setOnMouseClicked(event -> {
+            System.out.println("click button");
+            //ticClient.sendPairCommand();
+
+        });
+
+        game_panel.setOnMouseClicked(event -> {
+                System.out.println("TicClient clicked game_panel");
+            ticClient.sendCommandTOService("Client send command to service");
                 int x = (int) (event.getX() / BOUND);
                 int y = (int) (event.getY() / BOUND);
-                if(playerNum==0){
+
+               /* if(playerNum==0){
                     if(ticClient.sendPairCommand()){
                         System.out.println("Connect with opponent");
                         playerNum=ticClient.getPlayerNum();
                     }else {
                         System.out.println("NO opponent, controller can't put chess");
                     }
-                }else {
+                }*/
+
+                //else {
                     if (refreshBoard(x, y)) {
 
                         String command = x + "," + y;
 
-                        ticClient.sendCommand(command);
+                        //ticClient.sendCommandTOService(command);
                         System.out.println("player" + TURN + " put chess on " + x + "," + y + " Now it's turn to player " + !TURN);
                         TURN = !TURN;
                     }
-                }
+                //}
 
             });
         //}
@@ -100,6 +119,52 @@ public class Controller implements Initializable {
                 }
             }else {
                 System.out.println("now it's turn to player1");
+                return false;//
+            }
+        }
+
+
+        /*
+        if (chessBoard[x][y] == EMPTY) {
+            chessBoard[x][y] = TURN ? PLAY_1 : PLAY_2;
+            drawChess();
+            return true;
+        }
+        return false;*/
+        return false;
+    }
+
+    public boolean opponentRefresh(int x,int y){
+        if(playerNum==1){
+            if(TURN==false){ // now it is player2
+                if(chessBoard[x][y] == EMPTY){
+                    chessBoard[x][y]=2;
+                    drawChess();
+                    System.out.println("player2 draw chess on"+x+","+y+"on player1's chessboard");
+
+                    return true;
+                }else {
+                    System.out.println(" have been put a chess");
+                    return false;//
+                }
+            }else {
+                System.out.println("now it's turn to player1");
+                return false;//
+            }
+        }
+        if(playerNum==2){
+            if(TURN==true){//now it is player1
+                if(chessBoard[x][y] == EMPTY){
+                    chessBoard[x][y]=1;
+                    drawChess();
+                    System.out.println("player1 draw chess on"+x+","+y+"on player2's chessboard");
+                    return true;
+                }else {
+                    System.out.println(" been put a chess");
+                    return false;//
+                }
+            }else {
+                System.out.println("now it's turn to player2");
                 return false;//
             }
         }

@@ -12,10 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class TicClient extends Application {
+public class TicClient
+        //implements Runnable
+       // extends Application
+{
 
 
     String playerName;
@@ -28,6 +32,7 @@ public class TicClient extends Application {
     String response;
     Socket socket;
     int playerNum=0;
+    boolean receiveResponse=false;
 
 
     public TicClient(String playerName){
@@ -39,15 +44,21 @@ public class TicClient extends Application {
            // int playerNum
     ) throws IOException {
        // this.playerNum=playerNum;
-        final int SBAP_PORT =7878;
+        final int SERVER_PORT =2456;
         try
                 //(Socket s = new Socket( "localhost", SBAP_PORT);
              //InputStream instream = s.getInputStream();
              //OutputStream outstream = s.getOutputStream()
         //)
         {
-            Socket s = new Socket( "localhost", SBAP_PORT);
+            Socket s = new Socket( "localhost",SERVER_PORT);
             socket=s;
+            in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream());
+            sendCommandTOService("1ClientSendCommandToService");
+            receiveResponse();
+            //run();
+
             //sendPairCommand();
             //this.instream=instream;
             //this.outstream=outstream;
@@ -56,11 +67,24 @@ public class TicClient extends Application {
             //in = new Scanner(instream);
             //out = new PrintWriter(outstream);
 
+
+            //create client socket
+            /*final int CLIENT_PORT = 344;
+            ServerSocket serverInClient = new ServerSocket(CLIENT_PORT);
+            System.out.println("Waiting for server to connect...");
+            Socket sForServe =serverInClient.accept();
+            System.out.println( "Server connected." );
+            ClientService clientService = new ClientService(sForServe);
+            Thread thread = new Thread(clientService);
+            thread.start();*/
+            //
+
+
         }catch (Exception e){
             System.out.println("Exception");
         }
     }
-
+    /*
     public void sendCommand(String commandFromController) {
         try {
             instream = socket.getInputStream();
@@ -81,6 +105,36 @@ public class TicClient extends Application {
 
 
     }
+    */
+    public void sendCommandTOService(String commandFromController){
+        try {
+            outstream = socket.getOutputStream();
+            out=new PrintWriter(outstream);
+            out.println(commandFromController);
+            out.flush();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public void receiveResponse(){
+
+        while (true){
+            if(!in.hasNext())return;
+            String response = in.next();
+            if(response.substring(0,1).equals("2")){
+            excecuteResponse(response);}
+        }
+    }
+    public void excecuteResponse(String response){
+
+        System.out.println(response);
+    }
+    /*
     public boolean sendPairCommand(){
         try {
             instream = socket.getInputStream();
@@ -103,6 +157,10 @@ public class TicClient extends Application {
         }
         return false;
     }
+    */
+
+
+
     public void setSocket(Socket s){
         socket=s;
     }
@@ -114,7 +172,61 @@ public class TicClient extends Application {
         return playerNum;
     }
 
+    //////////
 
+    /*
+    public void run(){
+        try {
+            System.out.println("test1");
+            in = new Scanner( socket.getInputStream());
+            out = new PrintWriter( socket.getOutputStream());
+            doService();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void doService() throws IOException {
+        while (true) {
+            System.out.println("test2");
+            if (!in.hasNext()) return;
+            String command = in.next();
+            executeCommand( command);
+        }
+    }
+
+    public void executeCommand(String command){
+
+        //only about opponent command
+
+        System.out.println("test3");
+        if(!command.substring(0,1).equals("O")){
+            return;
+        }
+        if (command.substring(0,2).equals("OP")){
+            playerNum=Integer.parseInt(command.substring(2,3));
+            controller.setPlayerNum(Integer.parseInt(command.substring(2,3)));
+            response="pair success";
+            System.out.println(response);
+            out.println(response);
+            out.flush();
+            return;
+        }
+        int x=Integer.parseInt(command.substring(1,2));
+        int y=Integer.parseInt(command.substring(3,4));
+        if(controller.opponentRefresh(x,y)){
+            System.out.println("opponent refresh this player");
+            response="O"+"OK";
+        }
+
+        out.println(response);
+        out.flush();
+
+    }
+*/
+
+
+    /*
     public static void main (String[] args) throws IOException {
         final int SBAP_PORT = 33;
         try (Socket socket = new Socket( "localhost", SBAP_PORT)) {
@@ -155,6 +267,8 @@ public class TicClient extends Application {
         }
 
     }
+    */
+
 
 
 

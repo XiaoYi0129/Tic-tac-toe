@@ -28,7 +28,7 @@ public class Main2 extends Application {
             ticClient.newClient();
             Controller controller=fxmlLoader.<Controller>getController();
             controller.setTicClient(ticClient);
-            controller.setPlayerNum(2);
+            //controller.setPlayerNum(2);
             ticClient.setController(controller);
 
 
