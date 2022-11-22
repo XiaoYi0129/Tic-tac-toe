@@ -11,11 +11,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+//https://zhuanlan.zhihu.com/p/30386925?utm_campaign=&utm_medium=social&utm_oi=881551676933308416&utm_psn=1578347964766126080&utm_source=qq
 
 public class Controller implements Initializable {
     private static final int PLAY_1 = 1;
@@ -35,7 +38,10 @@ public class Controller implements Initializable {
     private Rectangle game_panel;
 
     @FXML
-    private Button pair_button;
+    private Button register_button;
+
+    @FXML
+    private TextField playerName;
 
 
     private static boolean TURN = true;
@@ -50,18 +56,21 @@ public class Controller implements Initializable {
            //ticClient.sendPairCommand();
        // }else {
        // System.out.println("?????");
-        pair_button.setOnMouseClicked(event -> {
+        register_button.setOnMouseClicked(event -> {
             System.out.println("click button");
             //ticClient.sendPairCommand();
 
         });
 
+       // playerName.
+
         game_panel.setOnMouseClicked(event -> {
                 System.out.println("TicClient clicked game_panel");
-            ticClient.sendCommandTOService("Client send command to service");
+
                 int x = (int) (event.getX() / BOUND);
                 int y = (int) (event.getY() / BOUND);
 
+            ///ticClient.sendCommand(String.valueOf(playerNum)+String.valueOf(x)+String.valueOf(y));
                /* if(playerNum==0){
                     if(ticClient.sendPairCommand()){
                         System.out.println("Connect with opponent");
@@ -73,11 +82,12 @@ public class Controller implements Initializable {
 
                 //else {
                     if (refreshBoard(x, y)) {
+                        ticClient.sendCommand(String.valueOf(playerNum)+String.valueOf(x)+String.valueOf(y));
 
                         String command = x + "," + y;
 
                         //ticClient.sendCommandTOService(command);
-                        System.out.println("player" + TURN + " put chess on " + x + "," + y + " Now it's turn to player " + !TURN);
+                        System.out.println("player " + TURN + " put chess on " + x + "," + y + " Now it's turn to player " + !TURN);
                         TURN = !TURN;
                     }
                 //}
@@ -95,6 +105,7 @@ public class Controller implements Initializable {
                     chessBoard[x][y]=1;
                     drawChess();
                     System.out.println("player1 draw chess on"+x+","+y);
+                    winOrLose();
 
                     return true;
                 }else {
@@ -112,6 +123,7 @@ public class Controller implements Initializable {
                     chessBoard[x][y]=2;
                     drawChess();
                     System.out.println("player2 draw chess on"+x+","+y);
+                    winOrLose();
                     return true;
                 }else {
                     System.out.println("player2 have been put a chess");
@@ -135,13 +147,15 @@ public class Controller implements Initializable {
     }
 
     public boolean opponentRefresh(int x,int y){
+        System.out.println("Controller2 140");
         if(playerNum==1){
             if(TURN==false){ // now it is player2
                 if(chessBoard[x][y] == EMPTY){
                     chessBoard[x][y]=2;
                     drawChess();
                     System.out.println("player2 draw chess on"+x+","+y+"on player1's chessboard");
-
+                    winOrLose();
+                    TURN=!TURN;
                     return true;
                 }else {
                     System.out.println(" have been put a chess");
@@ -158,6 +172,8 @@ public class Controller implements Initializable {
                     chessBoard[x][y]=1;
                     drawChess();
                     System.out.println("player1 draw chess on"+x+","+y+"on player2's chessboard");
+                    winOrLose();
+                    TURN=!TURN;
                     return true;
                 }else {
                     System.out.println(" been put a chess");
@@ -243,5 +259,50 @@ public class Controller implements Initializable {
 
     public void setPlayerNum(int playerNum) {
         this.playerNum = playerNum;
+    }
+
+    private void winOrLose(){
+        //shu
+        for(int i=0;i<3;i++){
+            if(chessBoard[i][0]!=0 && chessBoard[i][0]==chessBoard[i][1] && chessBoard[i][1]==chessBoard[i][2]){
+                System.out.println(chessBoard[i][0]+"win");
+                return;
+            }
+        }
+
+        //heng
+        for (int j=0;j<3;j++){
+            if(chessBoard[0][j]!=0 && chessBoard[0][j]==chessBoard[1][j]&& chessBoard[1][j]==chessBoard[2][j]){
+                System.out.println(chessBoard[0][j]+"win");
+                return;
+            }
+        }
+
+        //xie
+        if(chessBoard[0][0]!=0 && chessBoard[0][0]==chessBoard[1][1] && chessBoard[1][1]==chessBoard[2][2]){
+            System.out.println(chessBoard[0][0]+"win");
+            return;
+        }
+        if(chessBoard[2][0]!=0 && chessBoard[2][0]==chessBoard[1][1] && chessBoard[1][1]==chessBoard[0][2]){
+            System.out.println(chessBoard[2][0]+"win");
+            return;
+        }
+        if ((ifPin())){
+            System.out.println("Draw");
+            return;
+        }
+
+
+
+    }
+    private boolean ifPin(){
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                if(chessBoard[i][j]==0){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

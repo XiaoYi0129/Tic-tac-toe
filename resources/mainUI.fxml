@@ -5,7 +5,7 @@
 <?import javafx.scene.shape.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.Controller">
-   <Button fx:id="pair_button" layoutX="467.0" layoutY="91.0" prefHeight="56.0" prefWidth="55.0" text="pair" />
+   <Button fx:id="register_button" layoutX="486.0" layoutY="101.0" prefHeight="58.0" prefWidth="69.0" text="Register" />
    <Pane id="base" fx:id="base_square" layoutX="150.0" layoutY="50.0" prefHeight="300.0" prefWidth="300.0">
 
       <Rectangle fx:id="game_panel" arcHeight="5.0" arcWidth="5.0" fill="#f2f2f2" height="270.0" layoutX="15.0" layoutY="15.0" stroke="BLACK" strokeType="INSIDE" width="270.0" />
@@ -14,4 +14,6 @@
       <Line endX="170.0" layoutX="70.0" layoutY="150.0" rotate="270.0" startX="-100.0" />
       <Line endX="170.0" layoutX="160.0" layoutY="151.0" rotate="90.0" startX="-100.0" />
    </Pane>
+
+
 </AnchorPane>

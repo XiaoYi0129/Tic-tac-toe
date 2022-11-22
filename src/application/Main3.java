@@ -11,71 +11,47 @@ import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
-public class Main2 extends Application {
-
+public class Main3 extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("mainUI.fxml"));
 
-            //fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
+            // fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
             Pane root = fxmlLoader.load();
 
+            //Button button = new Button("Pair");
 
-            primaryStage.setTitle("Tic Tac Toe2");
+            primaryStage.setTitle("Tic Tac Toe3");
             primaryStage.setScene(new Scene(root));
             primaryStage.setResizable(false);
             primaryStage.show();
 
 
-
-            TicClient ticClient=new TicClient("player2");
+            TicClient ticClient=new TicClient("player3");
             ticClient.newClient();
             Thread thread= new Thread(ticClient);
             thread.start();
 
-            Controller controller=fxmlLoader.<Controller>getController();
+            Controller controller= fxmlLoader.getController();
             controller.setTicClient(ticClient);
 
             ticClient.setController(controller);
+
+            //ticClient.newClient();
+
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
                 @Override
 
                 public void handle(WindowEvent event) {
 
-                    System.out.print("listen player close penal");
-                    ticClient.sendCommand("52");
+                    System.out.print("listen player3 close penal");
+                    ticClient.sendCommand("53");
 
                 }
 
             });
-            //ticClient.newClient();
-
-            /* primaryStage.setTitle("Tic Tac Toe2");
-            primaryStage.setScene(new Scene(root));
-            primaryStage.setResizable(false);
-            primaryStage.show();
-
-
-            TicClient ticClient=new TicClient("player2");
-            ticClient.newClient();
-            Controller controller=fxmlLoader.<Controller>getController();
-            controller.setTicClient(ticClient);
-
-            ticClient.setController(controller);*/
-
-
-
-
-
-
-
-
-
-
-
-
             new BeforeEnd(ticClient.getSocket());
         } catch (Exception e) {
             e.printStackTrace();

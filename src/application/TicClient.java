@@ -2,6 +2,7 @@ package application;
 
 import application.controller.Controller;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -16,23 +17,25 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class TicClient
+public class TicClient implements Runnable
         //implements Runnable
        // extends Application
 {
 
 
-    String playerName;
-    Controller controller;
-    InputStream instream;
-    OutputStream outstream;
-    Scanner in;
-    PrintWriter out;
-    String command;
-    String response;
-    Socket socket;
-    int playerNum=0;
-    boolean receiveResponse=false;
+    private String playerName;
+   private Controller controller;
+    private InputStream instream;
+    private OutputStream outstream;
+   private Scanner in;
+    private PrintWriter out;
+    private String command;
+    private String response;
+    private Socket socket;
+    private  int playerNum=0;
+    private  int opponentPlayerNum=0;
+   private  boolean receiveResponse=false;
+    private int playerListNum=0;
 
 
     public TicClient(String playerName){
@@ -44,7 +47,7 @@ public class TicClient
            // int playerNum
     ) throws IOException {
        // this.playerNum=playerNum;
-        final int SERVER_PORT =2456;
+        final int SERVER_PORT =4990;
         try
                 //(Socket s = new Socket( "localhost", SBAP_PORT);
              //InputStream instream = s.getInputStream();
@@ -55,8 +58,19 @@ public class TicClient
             socket=s;
             in = new Scanner(socket.getInputStream());
             out = new PrintWriter(socket.getOutputStream());
-            sendCommandTOService("1ClientSendCommandToService");
-            receiveResponse();
+
+
+            /*
+            socket.setKeepAlive(true);
+            socket.setSoTimeout(10);
+            */
+            /*in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream());*/
+
+
+
+            //sendCommandTOService("1ClientSendCommandToService");
+            //receiveResponse();
             //run();
 
             //sendPairCommand();
@@ -81,7 +95,7 @@ public class TicClient
 
 
         }catch (Exception e){
-            System.out.println("Exception");
+            e.printStackTrace();
         }
     }
     /*
@@ -106,8 +120,12 @@ public class TicClient
 
     }
     */
-    public void sendCommandTOService(String commandFromController){
+    public void sendCommand
+    //TOService
+            (String commandFromController){
+        //this play want to change that player
         try {
+            System.out.println(commandFromController);
             outstream = socket.getOutputStream();
             out=new PrintWriter(outstream);
             out.println(commandFromController);
@@ -121,18 +139,64 @@ public class TicClient
 
 
 
-    public void receiveResponse(){
+    public void run(){
+       // try {
+            //in = new Scanner(socket.getInputStream());
+            //out = new PrintWriter(socket.getOutputStream());
+            doService();
+        //}catch (IOException e){
+          //  e.printStackTrace();
+       // }
+    }
+    public void doService(){
+
 
         while (true){
+            /*if(controller==null){
+                System.out.println("CLose");
+            }*/
             if(!in.hasNext())return;
             String response = in.next();
-            if(response.substring(0,1).equals("2")){
-            excecuteResponse(response);}
+            System.out.println(response);
+
+            if(response.substring(0,1).equals("0")){
+                //now pair
+                //playerListNum=Integer.parseInt(response.substring(1,2));
+                //System.out.println(playerListNum);
+                int num=Integer.parseInt(response.substring(1,2));
+                System.out.println(num);
+                playerNum=num;
+
+                opponentPlayerNum=Integer.parseInt(response.substring(2,3));
+
+                controller.setPlayerNum(num);
+
+                //if player1 , make sure here only read 2
+                // if player2, make sure here only read
+                }else if(Integer.parseInt(response.substring(0,1))==opponentPlayerNum){
+                System.out.println("TicClient2 162");
+                excecuteResponse12(response);
+            }else if(response.substring(0,1).equals("5")){
+                System.out.println("Opponent close penal");
+            }else if(response.equals("6Exit")){
+                System.out.println("Opponent exit");
+            }else if(response.equals("7Exit")){
+                System.out.println("Server exit");
+            }
+
         }
     }
-    public void excecuteResponse(String response){
-
+    public void excecuteResponse12(String response){
         System.out.println(response);
+        //Not on FX application thread; currentThread = Thread-4
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                controller.opponentRefresh(Integer.parseInt(response.substring(1,2)),Integer.parseInt(response.substring(2,3)));
+            }
+        });
+
+        //controller.opponentRefresh(Integer.parseInt(response.substring(1,2)),Integer.parseInt(response.substring(2,3)));
     }
     /*
     public boolean sendPairCommand(){
@@ -164,6 +228,9 @@ public class TicClient
     public void setSocket(Socket s){
         socket=s;
     }
+    public Socket getSocket(){
+        return socket;
+    }
     public void setController(Controller controller) {
         this.controller = controller;
     }
@@ -172,6 +239,9 @@ public class TicClient
         return playerNum;
     }
 
+    public void setOpponentPlayerNum(int opponentPlayerNum) {
+        this.opponentPlayerNum = opponentPlayerNum;
+    }
     //////////
 
     /*
