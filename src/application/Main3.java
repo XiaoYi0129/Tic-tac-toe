@@ -7,9 +7,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import java.io.IOException;
 import javafx.stage.WindowEvent;
 
-import java.io.IOException;
 
 public class Main3 extends Application {
     @Override

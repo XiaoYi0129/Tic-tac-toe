@@ -1,5 +1,7 @@
 package application;
 
+
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,7 +62,7 @@ public class TicServer {
             //ticServer.getSocketTicServiceHashMap().put(socket,service);
 
 
-           //socket.setSoTimeout(5000);
+            //socket.setSoTimeout(5000);
 
             //receive client socket
             /*
@@ -171,9 +173,9 @@ public class TicServer {
         return servicePair;
     }
 
-   /*public ArrayList<Socket> getSocketFromClientList(){
-        return socketFromClientList;
-    }*/
+    /*public ArrayList<Socket> getSocketFromClientList(){
+         return socketFromClientList;
+     }*/
     public void setSocketToClient(Socket s){
         socketServerToClient=s;
     }
