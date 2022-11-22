@@ -3,11 +3,7 @@ package application;
 import application.controller.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +16,7 @@ import java.util.Scanner;
 public class TicClient implements Runnable
         //implements Runnable
        // extends Application
-{
+    {
 
 
     private String playerName;
@@ -54,7 +50,7 @@ public class TicClient implements Runnable
              //OutputStream outstream = s.getOutputStream()
         //)
         {
-            Socket s = new Socket( "localhost",SERVER_PORT);
+            Socket s = new Socket("localhost", SERVER_PORT);
             socket=s;
             in = new Scanner(socket.getInputStream());
             out = new PrintWriter(socket.getOutputStream());
